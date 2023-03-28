@@ -1,0 +1,8 @@
+"","Species_genetic_only",".y.","group1","group2","n1","n2","statistic","df","p","p.adj","p.adj.signif"
+"1","Control","Meta_adj_per","Antibiotic","Untreated",8,8,-0.791085003634184,10.4207633101636,0.447,1,"ns"
+"2","Lithophyllum Corsp27BC","Meta_adj_per","Antibiotic","Untreated",5,14,-1.69578015800134,10.7554003910134,0.119,0.833,"ns"
+"3","Crusticorallina painei","Meta_adj_per","Antibiotic","Untreated",8,7,-0.00437774060286891,12.836317929797,0.997,1,"ns"
+"4","Chiharaea americana f. bodegensis","Meta_adj_per","Antibiotic","Untreated",7,8,0.664424208301498,12.8896184334773,0.518,1,"ns"
+"5","Lithothamnion glaciale","Meta_adj_per","Antibiotic","Untreated",16,12,-0.176471242826804,25.7567213773022,0.861,1,"ns"
+"6","Bossiella schmittii","Meta_adj_per","Antibiotic","Untreated",8,8,0.625963269976392,13.8532770486049,0.542,1,"ns"
+"7","Calliarthron tuberculosum","Meta_adj_per","Antibiotic","Untreated",8,8,-0.355789765554442,13.7101936518076,0.727,1,"ns"

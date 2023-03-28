@@ -1,0 +1,6 @@
+
+	One-way analysis of means (not assuming equal variances)
+
+data:  Density_cm_log and Species_updated
+F = 19.649, num df = 11.000, denom df = 20.188, p-value = 2.081e-08
+

@@ -1,0 +1,46 @@
+,contrast,group 1,group 2,estimate,SE,df,t.ratio,p.value,sig p<0.05
+1,Cover slip - Rock,Cover slip , Rock,4.524123108,0.459950093,35,9.836117396,5.67E-10,***
+2,Cover slip - Lithophyllum Corsp27BC,Cover slip , Lithophyllum Corsp27BC,4.407286474,0.447494237,35,9.848811688,5.48E-10,***
+3,Cover slip - Crusticorallina muricata,Cover slip , Crusticorallina muricata,4.963667943,0.211461688,35,23.47313117,0,***
+4,Cover slip - Crusticorallina painei,Cover slip , Crusticorallina painei,4.67974462,0.333273625,35,14.04174907,0,***
+5,Cover slip - Hildenbrandia spp,Cover slip , Hildenbrandia spp,4.071091715,0.891153996,35,4.568336936,0.002101581,**
+6,Cover slip - Chiharaea americana f. bodegensis,Cover slip , Chiharaea americana f. bodegensis,4.765659734,0.255024594,35,18.68705942,0,***
+7,Cover slip - Lithothamnion glaciale,Cover slip , Lithothamnion glaciale,4.690134999,0.303219188,35,15.46780413,0,***
+8,Cover slip - Bossiella schmittii,Cover slip , Bossiella schmittii,1.991577963,0.384231431,35,5.183277056,0.000352509,***
+9,Cover slip - Calliarthron tuberculosum,Cover slip , Calliarthron tuberculosum,0.797434126,0.447198432,35,1.783177375,0.740738365,
+10,Rock - Lithophyllum Corsp27BC,Rock , Lithophyllum Corsp27BC,-0.116836634,0.567779085,35,-0.205778333,0.999999982,
+11,Rock - Crusticorallina muricata,Rock , Crusticorallina muricata,0.439544835,0.408458128,35,1.076107453,0.984022245,
+12,Rock - Crusticorallina painei,Rock , Crusticorallina painei,0.155621512,0.482900928,35,0.32226385,0.999999071,
+13,Rock - Hildenbrandia spp,Rock , Hildenbrandia spp,-0.453031393,0.95722382,35,-0.473276347,0.99997415,
+14,Rock - Chiharaea americana f. bodegensis,Rock , Chiharaea americana f. bodegensis,0.241536626,0.432619394,35,0.558312063,0.99989607,
+15,Rock - Lithothamnion glaciale,Rock , Lithothamnion glaciale,0.166011891,0.462670371,35,0.358812454,0.999997623,
+16,Rock - Bossiella schmittii,Rock , Bossiella schmittii,-2.532545145,0.519380197,35,-4.876091074,0.000866343,***
+17,Rock - Calliarthron tuberculosum,Rock , Calliarthron tuberculosum,-3.726688982,0.567545975,35,-6.566320868,5.76E-06,***
+18,Lithophyllum Corsp27BC - Crusticorallina muricata,Lithophyllum Corsp27BC , Crusticorallina muricata,0.556381469,0.394379318,35,1.410777501,0.915618144,
+19,Lithophyllum Corsp27BC - Crusticorallina painei,Lithophyllum Corsp27BC , Crusticorallina painei,0.272458146,0.471052344,35,0.578403121,0.999860628,
+20,Lithophyllum Corsp27BC - Hildenbrandia spp,Lithophyllum Corsp27BC , Hildenbrandia spp,-0.336194759,0.951301448,35,-0.353405074,0.999997918,
+21,Lithophyllum Corsp27BC - Chiharaea americana f. bodegensis,Lithophyllum Corsp27BC , Chiharaea americana f. bodegensis,0.35837326,0.41935253,35,0.854587094,0.99691949,
+22,Lithophyllum Corsp27BC - Lithothamnion glaciale,Lithophyllum Corsp27BC , Lithothamnion glaciale,0.282848525,0.45028977,35,0.628147793,0.999725486,
+23,Lithophyllum Corsp27BC - Bossiella schmittii,Lithophyllum Corsp27BC , Bossiella schmittii,-2.415708511,0.508382527,35,-4.751753613,0.001241891,**
+24,Lithophyllum Corsp27BC - Calliarthron tuberculosum,Lithophyllum Corsp27BC , Calliarthron tuberculosum,-3.609852348,0.557499273,35,-6.475079926,7.55E-06,***
+25,Crusticorallina muricata - Crusticorallina painei,Crusticorallina muricata , Crusticorallina painei,-0.283923323,0.257595155,35,-1.102207546,0.981242013,
+26,Crusticorallina muricata - Hildenbrandia spp,Crusticorallina muricata , Hildenbrandia spp,-0.892576228,0.86570168,35,-1.03104366,0.988066645,
+27,Crusticorallina muricata - Chiharaea americana f. bodegensis,Crusticorallina muricata , Chiharaea americana f. bodegensis,-0.198008209,0.142553491,35,-1.389009894,0.922560052,
+28,Crusticorallina muricata - Lithothamnion glaciale,Crusticorallina muricata , Lithothamnion glaciale,-0.273532944,0.217315048,35,-1.258693066,0.956342376,
+29,Crusticorallina muricata - Bossiella schmittii,Crusticorallina muricata , Bossiella schmittii,-2.972089981,0.32080796,35,-9.264389757,2.60E-09,***
+30,Crusticorallina muricata - Calliarthron tuberculosum,Crusticorallina muricata , Calliarthron tuberculosum,-4.166233817,0.394043642,35,-10.57302636,8.43E-11,***
+31,Crusticorallina painei - Hildenbrandia spp,Crusticorallina painei , Hildenbrandia spp,-0.608652905,0.90321352,35,-0.673874883,0.99951519,
+32,Crusticorallina painei - Chiharaea americana f. bodegensis,Crusticorallina painei , Chiharaea americana f. bodegensis,0.085915114,0.294409174,35,0.291822137,0.999999612,
+33,Crusticorallina painei - Lithothamnion glaciale,Crusticorallina painei , Lithothamnion glaciale,0.010390379,0.337017943,35,0.030830344,1,
+34,Crusticorallina painei - Bossiella schmittii,Crusticorallina painei , Bossiella schmittii,-2.688166657,0.411428015,35,-6.533747247,6.35E-06,***
+35,Crusticorallina painei - Calliarthron tuberculosum,Crusticorallina painei , Calliarthron tuberculosum,-3.882310494,0.470771341,35,-8.246701005,4.35E-08,***
+36,Hildenbrandia spp - Chiharaea americana f. bodegensis,Hildenbrandia spp , Chiharaea americana f. bodegensis,0.694568019,0.877360186,35,0.791656642,0.998277273,
+37,Hildenbrandia spp - Lithothamnion glaciale,Hildenbrandia spp , Lithothamnion glaciale,0.619043284,0.89256105,35,0.693558479,0.999389514,
+38,Hildenbrandia spp - Bossiella schmittii,Hildenbrandia spp , Bossiella schmittii,-2.079513752,0.923231903,35,-2.252428394,0.44278277,
+39,Hildenbrandia spp - Calliarthron tuberculosum,Hildenbrandia spp , Calliarthron tuberculosum,-3.273657589,0.951162337,35,-3.44174434,0.042567523,*
+40,Chiharaea americana f. bodegensis - Lithothamnion glaciale,Chiharaea americana f. bodegensis , Lithothamnion glaciale,-0.075524735,0.259898688,35,-0.290592983,0.999999626,
+41,Chiharaea americana f. bodegensis - Bossiella schmittii,Chiharaea americana f. bodegensis , Bossiella schmittii,-2.774081771,0.351054476,35,-7.90214044,1.16E-07,***
+42,Chiharaea americana f. bodegensis - Calliarthron tuberculosum,Chiharaea americana f. bodegensis , Calliarthron tuberculosum,-3.968225608,0.41903686,35,-9.469872437,1.50E-09,***
+43,Lithothamnion glaciale - Bossiella schmittii,Lithothamnion glaciale , Bossiella schmittii,-2.698557036,0.387483648,35,-6.964312044,1.77E-06,***
+44,Lithothamnion glaciale - Calliarthron tuberculosum,Lithothamnion glaciale , Calliarthron tuberculosum,-3.892700873,0.449995802,35,-8.650527078,1.40E-08,***
+45,Bossiella schmittii - Calliarthron tuberculosum,Bossiella schmittii , Calliarthron tuberculosum,-1.194143837,0.50812217,35,-2.350111662,0.384466782,
