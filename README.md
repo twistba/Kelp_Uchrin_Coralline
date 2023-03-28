@@ -1,4 +1,4 @@
-# Kelp settlement and urchin larval metamorphosis on cryptic coralline algae 
+# Kelp settlement and urchin larval metamorphosis on coralline algae 
 
 This repository contains data used in Twist et al. publication Kelp settlement and urchin larval metamorphosis on cryptic coralline algae with implications for kelp forest recovery.
 
