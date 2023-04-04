@@ -1,5 +1,7 @@
 # Kelp settlement and urchin larval metamorphosis on coralline algae 
 
+[![DOI](https://zenodo.org/badge/302171953.svg)](https://zenodo.org/badge/latestdoi/302171953)
+
 This repository contains data used in Twist et al. publication Kelp settlement and urchin larval metamorphosis on cryptic coralline algae with implications for kelp forest recovery.
 
 Data are separated into four seperate data folders and one figure folder each with a corresponding R scripts and raw data, outlined below.
