@@ -49,7 +49,7 @@ str(spore)
 ##Select for the highest density out of the two count periods
 
 spore_wide<- spore %>% dplyr::select(UID,Plate,Plate_numb,Kelp_species,Morpho_species,Species_updated,
-                              Type,Unique_site,Rep,Period,Density_cm) %>%
+                                     Type,Unique_site,Rep,Period,Density_cm) %>%
   gather(key, value, Density_cm  ) %>%  
   unite(new.col, c(key, Period)) %>%   
   spread(new.col, value) 
@@ -57,7 +57,7 @@ spore_wide<- spore %>% dplyr::select(UID,Plate,Plate_numb,Kelp_species,Morpho_sp
 str(spore_wide)
 
 spore_wide %<>% mutate(Density_cm_max=pmax(Density_cm_1,Density_cm_2,na.rm = TRUE), 
-                            Density_cm_diff = Density_cm_2-Density_cm_1)
+                       Density_cm_diff = Density_cm_2-Density_cm_1)
 
 
 spore_wide$max_density_time<-colnames(spore_wide[,c("Density_cm_1","Density_cm_2")])[
@@ -76,13 +76,13 @@ cor_rel_abun<-cor_rel_abun %>% dplyr::rename(Species_updated=Species_name_marton
                            cor_rel_abun, by="Species_updated"))
 
 relative_abund %<>% mutate(Kelp_relative_abun = round(Kelp_relative_abun, 2),
-                          Urchin_relative_abun = round(Urchin_relative_abun, 2))  #round to 2 dp
+                           Urchin_relative_abun = round(Urchin_relative_abun, 2))  #round to 2 dp
 
 fleshy<-cor_rel_abun%>% dplyr::filter(Species_updated=="Fleshy red crust")
 kelp_fleshy<-round(fleshy$Kelp_relative_abun,2)
 urchin_fleshy<-round(fleshy$Urchin_relative_abun,2)
 
-  #lets add a relative abundance for two ACA and fleshy reds
+#lets add a relative abundance for two ACA and fleshy reds
 str(relative_abund)
 unique(relative_abund$Species_updated)
 
@@ -91,8 +91,8 @@ relative_abund %<>%
                                     Species_updated=="Bossiella orbigniana"| 
                                       Species_updated=="Calliarthron tuberculosum", 1.00),
          Urchin_relative_abun=replace(Urchin_relative_abun, 
-                                    Species_updated=="Bossiella orbigniana"| 
-                                      Species_updated=="Calliarthron tuberculosum", 0.00),
+                                      Species_updated=="Bossiella orbigniana"| 
+                                        Species_updated=="Calliarthron tuberculosum", 0.00),
          Kelp_relative_abun=replace(Kelp_relative_abun, 
                                     Species_updated=="Hildenbrandia spp"| 
                                       Species_updated=="Peyssonnelia spp", kelp_fleshy),
@@ -107,16 +107,16 @@ spore_wide<-left_join(spore_wide,relative_abund, by="Species_updated")
 ##Reorder levels
 spore_wide$Species_updated %<>% as.factor 
 spore_wide$Species_updated <- factor(spore_wide$Species_updated, 
-                                    levels=c("Cover slip",  "Rock", "Hildenbrandia spp","Peyssonnelia spp",  "Dead Crusticorallina" ,
-                                             "Lithophyllum Corsp27BC", "Chiharaea americana f. americana", "Crusticorallina muricata",
-                                             "Crusticorallina painei","Chiharaea americana f. bodegensis" ,"Lithophyllum Corsp4BC",
-                                             "Lithothamnion glaciale", "Bossiella schmittii", "Calliarthron tuberculosum", 
-                                             "Bossiella orbigniana" )) 
+                                     levels=c("Cover slip",  "Rock", "Hildenbrandia spp","Peyssonnelia spp",  "Dead Crusticorallina" ,
+                                              "Lithophyllum Corsp27BC", "Chiharaea americana f. americana", "Crusticorallina muricata",
+                                              "Crusticorallina painei","Chiharaea americana f. bodegensis" ,"Lithophyllum Corsp4BC",
+                                              "Lithothamnion glaciale", "Bossiella schmittii", "Calliarthron tuberculosum", 
+                                              "Bossiella orbigniana" )) 
 levels(spore_wide$Species_updated)
 
 #add a count of each genetically ID coralline species for each kelp-  so can filter
 species_counts<- spore_wide%>%                  
-   filter(!is.na(Species_updated)) %>%    
+  filter(!is.na(Species_updated)) %>%    
   group_by(Kelp_species,Species_updated) %>%        
   dplyr::summarise(Species_updated_count = n()) 
 
@@ -138,13 +138,14 @@ cost<- as.data.frame(spore_wide) %>% dplyr::filter(Kelp_species == "Costaria Cos
 #--------------------------
 
 cost3<-cost %>%   filter(!is.na(Density_cm_max)) %>% 
+  filter(Species_updated!="Cover slip" ) %>% # Remove cover slip- not intended as control based on reveiwer comments
   filter(Species_updated_count >= 3) # removes species with less than 3 replicates & those without densities
 
 cost_lm <- cost3 %>% lm(Density_cm_max ~ Species_updated , data = .)
 # check assumptions - use plots and not test because of small sample size 
 # https://stats.stackexchange.com/questions/2492/is-normality-testing-essentially-useless
-  #shapiro.test(residuals(cost_lm))#P less than 0.05- not normally distributed
-  #leveneTest(Density_cm_max ~ Species_updated, data = cost3) #p less than 0.05 significant difference between variances across groups
+#shapiro.test(residuals(cost_lm))#P less than 0.05- not normally distributed
+#leveneTest(Density_cm_max ~ Species_updated, data = cost3) #p less than 0.05 significant difference between variances across groups
 hist(cost_lm$residuals,breaks=20)
 ggqqplot(residuals(cost_lm)) #look at qqplot to see normality 
 plot(cost_lm, 1) # look at residuals to check the homogeneity of variances.
@@ -154,8 +155,8 @@ plot(cost_lm, 1) # look at residuals to check the homogeneity of variances.
 #Log transformed model
 cost_lm <- cost3 %>%   lm(Density_cm_log ~ Species_updated , data = .)
 # check assumptions- as above use plots and not test because of small sample size 
-  #shapiro.test(residuals(cost_lm))#P less than 0.05- not normally distributed- looks better below though
-  #leveneTest(Density_cm_max ~ Species_updated, data = cost3) #p less than 0.05 significant difference between variances across groups
+#shapiro.test(residuals(cost_lm))#P less than 0.05- not normally distributed- looks better below though
+#leveneTest(Density_cm_max ~ Species_updated, data = cost3) #p less than 0.05 significant difference between variances across groups
 hist(cost_lm$residuals,breaks=20)
 ggqqplot(residuals(cost_lm))
 plot(cost_lm, 1) # look at residuals to check the homogeneity of variances.
@@ -193,8 +194,8 @@ write.csv(cost_out2,file="./kelp/results/cost_tukey_results.csv")
 
 #add letters to data set
 (cost_tukey_letters<-cost_cld %>% mutate(Kelp_species="Costaria Costata") %>% 
-  dplyr::rename("letter"=".group")%>%
-  dplyr::select(Kelp_species,Species_updated,letter))
+    dplyr::rename("letter"=".group")%>%
+    dplyr::select(Kelp_species,Species_updated,letter))
 
 
 (tukey_letters<-cost_tukey_letters)
@@ -206,13 +207,14 @@ write.csv(cost_out2,file="./kelp/results/cost_tukey_results.csv")
 
 
 nereo3<-nereo %>%   filter(!is.na(Density_cm_max)) %>% 
+  filter(Species_updated!="Cover slip" ) %>% # Remove cover slip- not intended as control based on reveiwer comments
   filter(Species_updated_count >= 3) # removes species with less than 3 replicates & those without densities
 
 #linear model
 nereo_lm <- nereo3 %>% lm(Density_cm_max ~ Species_updated , data = .)
 #check assumptions - as above use plots and not test because of small sample size 
-  #shapiro.test(residuals(nereo_lm))#P less than 0.05- not normally distributed
-  #leveneTest(Density_cm_max ~ Species_updated, data = nereo3) #p less than 0.05 significant difference between variances across groups
+#shapiro.test(residuals(nereo_lm))#P less than 0.05- not normally distributed
+#leveneTest(Density_cm_max ~ Species_updated, data = nereo3) #p less than 0.05 significant difference between variances across groups
 hist(nereo_lm$residuals,breaks=20)
 ggqqplot(residuals(nereo_lm))
 plot(nereo_lm, 1) # look at residuals to check the homogeneity of variances.
@@ -221,8 +223,8 @@ plot(nereo_lm, 1) # look at residuals to check the homogeneity of variances.
 #Use log values
 nereo_lm <- nereo3 %>%   lm(Density_cm_log ~ Species_updated , data = .)
 #check assumptions - as above use plots and not test because of small sample size
- #shapiro.test(residuals(nereo_lm))#P greater than 0.05-  normally distributed
-  #leveneTest(Density_cm_max ~ Species_updated, data = nereo3) #p less than 0.05 significant difference between variances across groups
+#shapiro.test(residuals(nereo_lm))#P greater than 0.05-  normally distributed
+#leveneTest(Density_cm_max ~ Species_updated, data = nereo3) #p less than 0.05 significant difference between variances across groups
 hist(nereo_lm$residuals,breaks=20)
 ggqqplot(residuals(nereo_lm))
 plot(nereo_lm, 1) # look at residuals to check the homogeneity of variances.
@@ -269,13 +271,14 @@ write.csv(nereo_out2,file="./kelp/results/nereo_tukey_results.csv")
 #--------------------
 
 macro3<-macro %>%   filter(!is.na(Density_cm_max)) %>% 
+  filter(Species_updated!="Cover slip" ) %>% # Remove cover slip- not intended as control based on reveiwer comments
   filter(Species_updated_count >= 3) # removes species with less than 3 replicates & those without densities
 
 #linear model
 macro_lm <- macro3 %>% lm(Density_cm_max ~ Species_updated , data = .)
 #check assumptions - as above use plots and not test because of small sample size
-  #shapiro.test(residuals(macro_lm))#P greater than 0.05-  normally distributed
-  #leveneTest(Density_cm_max ~ Species_updated, data = macro3) #p greater than 0.05 no significant difference between variances across groups
+#shapiro.test(residuals(macro_lm))#P greater than 0.05-  normally distributed
+#leveneTest(Density_cm_max ~ Species_updated, data = macro3) #p greater than 0.05 no significant difference between variances across groups
 hist(nereo_lm$residuals,breaks=20)
 ggqqplot(residuals(macro_lm))
 plot(macro_lm, 1) # look at residuals to check the homogeneity of variances. looks bad even though test levene tests good
@@ -284,8 +287,8 @@ plot(macro_lm, 1) # look at residuals to check the homogeneity of variances. loo
 #Use log values
 macro_lm <- macro3 %>%   lm(Density_cm_log ~ Species_updated , data = .)
 #Check assumptions - as above use plots and not test because of small sample size
-  #shapiro.test(residuals(macro_lm))#P greater than 0.05-  normally distributed- looks better
-  #leveneTest(Density_cm_max ~ Species_updated, data = macro3) #p less than 0.05 significant difference between variances across groups
+#shapiro.test(residuals(macro_lm))#P greater than 0.05-  normally distributed- looks better
+#leveneTest(Density_cm_max ~ Species_updated, data = macro3) #p less than 0.05 significant difference between variances across groups
 hist(nereo_lm$residuals,breaks=20)
 ggqqplot(residuals(macro_lm))
 plot(macro_lm, 1) # look at residuals to check the homogeneity of variances.
@@ -335,30 +338,31 @@ tukey_letters<-tukey_letters %>% mutate(letter=gsub(" ","",letter)) # remove spa
 #################
 
 Species_xlabs<-c("Bossiella orbigniana" = "Bossiella\norbigniana", "Bossiella schmittii" = "Bossiella\nschmittii", 
-"Chiharaea americana f. americana" = "C. americana\nf. americana","Chiharaea americana f. bodegensis" = "C. americana\nf. bodegensis",
-"Crusticorallina 1" = "Crusticorallina\nmorph 1","Crusticorallina 2" = "Crusticorallina\nmorph 2",
-"Lithophyllum Corsp27BC"="Lithophyllum\nCorsp27BC" ,"Crusticorallina painei"= "Crusticorallina\npainei","Lithophyllum Corsp4BC"= "Lithophyllum\nCorsp4BC",
-"Crusticorallina muricata"= "Crusticorallina\nmuricata","Lithothamnion glaciale"= "Lithothamnion\nglaciale",
-"Calliarthron tuberculosum" = "Calliarthron\ntuberculosum","Cover slip" = "Control\nCover slip", "Hildinbrandia" = "Non-corallline\nred crust",
-"unknown crust 1" = "unknown\ncrust", "Rock" = "Bare Rock","Dead Crusticorallina" = "Dead\nCrusticorallina",
-"Hildenbrandia spp"="Hildenbrandia spp\n(non-coralline)","Peyssonnelia spp"="Peyssonnelia spp\n(non-coralline)")
+                 "Chiharaea americana f. americana" = "C. americana\nf. americana","Chiharaea americana f. bodegensis" = "C. americana\nf. bodegensis",
+                 "Crusticorallina 1" = "Crusticorallina\nmorph 1","Crusticorallina 2" = "Crusticorallina\nmorph 2",
+                 "Lithophyllum Corsp27BC"="Lithophyllum\nCorsp27BC" ,"Crusticorallina painei"= "Crusticorallina\npainei","Lithophyllum Corsp4BC"= "Lithophyllum\nCorsp4BC",
+                 "Crusticorallina muricata"= "Crusticorallina\nmuricata","Lithothamnion glaciale"= "Lithothamnion\nglaciale",
+                 "Calliarthron tuberculosum" = "Calliarthron\ntuberculosum","Cover slip" = "Control\nCover slip", "Hildinbrandia" = "Non-corallline\nred crust",
+                 "unknown crust 1" = "unknown\ncrust", "Rock" = "Bare Rock","Dead Crusticorallina" = "Dead\nCrusticorallina",
+                 "Hildenbrandia spp"="Hildenbrandia spp\n(non-coralline)","Peyssonnelia spp"="Peyssonnelia spp\n(non-coralline)")
 
 
 all_d_log<-spore_wide%>% 
   filter(Species_updated_count >= 3)%>% 
+  filter(Species_updated!="Cover slip" ) %>% # Remove cover slip- not intended as control based on reveiwer comments
   summarySE(., measurevar="Density_cm_log", groupvars=c("Kelp_species","Species_updated"), na.rm=TRUE)
 all_d_log<-left_join(all_d_log,tukey_letters,by=c("Kelp_species","Species_updated")) #add letters to dataset
 all_d_log
 
 p_log<-ggplot(data=all_d_log, aes(x=Species_updated, y= Density_cm_log, 
-                          ymin=Density_cm_log -se, ymax= Density_cm_log +se))+
+                                  ymin=Density_cm_log -se, ymax= Density_cm_log +se))+
   geom_bar(stat="identity",colour="black",fill="grey60") +
   geom_errorbar( width=0.25) +
   scale_x_discrete(labels=Species_xlabs)+
   geom_text(aes(label=letter, y=Density_cm_log +se), vjust=-1) +
   facet_wrap(~Kelp_species,ncol=1,scales = "free_y", 
              labeller = labeller(Kelp_species = 
-                                   c("Costaria Costata" = "A) Costaria Costata", 
+                                   c("Costaria Costata" = "A) Costaria costata", 
                                      "Macrocystis" = "B) Macrocystis pyrifera",
                                      "Nereocystis" = "C) Nereocystis luetkeana")),
              strip.position="top")+
