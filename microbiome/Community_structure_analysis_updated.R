@@ -34,9 +34,7 @@ library(ape)
 ##################
 
 phyloseq_obj_rare = readRDS("./microbiome/Phyloseq_object_rarefied.1000.RDS")
-
 phyloseq_obj_nonR = readRDS("./microbiome/Phyloseq_object_non_rarefied.RDS")
-
 
 sample_info_rare = as_tibble(sample_data(phyloseq_obj_rare))
 sample_info_nonR = as_tibble(sample_data(phyloseq_obj_nonR))
@@ -49,18 +47,9 @@ sample_info_nonR = as_tibble(sample_data(phyloseq_obj_nonR))
 
 ## Rarefied approach
 # Bray–Curtis
-
 bray_div = phyloseq_obj_rare %>% 
   phyloseq::distance("bray")
 hist(c(bray_div))
-
-# Compositionally -aware method; we can use the « Aitchison » distance 
-
-aitc_div_rare = phyloseq_obj_rare %>% 
-  microbiome::transform("clr") %>% 
-  phyloseq::distance("euclidean")
-hist(c(aitc_div_rare))
-
 
 
 ## Non Rarefied 
@@ -82,31 +71,16 @@ NMDS_coord = MDS_bray$points %>% as_tibble(rownames = "swab.ID") %>%
 
 table(sample_info_rare$Substrate)
 
-# PCoA compositionally -aware method
-# Rarefied 
-set.seed(258)
-PCOA_aitc_rare <-aitc_div_rare %>% 
-  pcoa() 
-
-PCOA_coord_rare = PCOA_aitc_rare$vectors[,1:2]%>%
-  as_tibble(rownames = "swab.ID") %>% 
-  dplyr::left_join(sample_info_rare)
-
-
-
-# Non-Rarefied 
+# Non-Rarefied CoDa approach
 set.seed(258)
 PCOA_aitc_nonR <-aitc_div_nonR %>% 
   pcoa() 
-
-PCOA_coord_nonR = PCOA_aitc_nonR$vectors[,1:2]%>%
+PCOA_coord_nonR = PCOA_aitc_nonR$vectors[,1:3]%>%
   as_tibble(rownames = "swab.ID") %>% 
   dplyr::left_join(sample_info_nonR)
 
 
-
-
-#PERMANOVA
+#PERMANOVA bray 
 set.seed(245)
 model_beta = adonis2(bray_div~Substrate, data = as_tibble(sample_data(phyloseq_obj_rare)),
                      permutations = 9999)
@@ -116,6 +90,17 @@ model_beta2
 # Substrate  5   6.2411 4.5595    0.25499  0.001 ***
 # Residual  46  12.5933                             
 # Total     51  18.8344   
+
+#PERMANOVA aitchison 
+set.seed(245)
+model_betaAi = adonis2(aitc_div_nonR~Substrate, data = as_tibble(sample_data(phyloseq_obj_rare)),
+                     permutations = 9999)
+model_betaAi2 = adonis_OmegaSq(model_betaAi)
+model_betaAi2
+#Df SumOfSqs     F parOmegaSq Pr(>F)    
+#Substrate  5    58757 4.364    0.24441  1e-04 ***
+#Residual  46   123867                            
+#Total     51   182624  
 
 
 # FIGURE 
@@ -143,41 +128,7 @@ Fig1a_col
 #Fig1_bw
 
 ggsave(Fig1a_col, width = 21, height = 16, units = "cm", dpi = 600,
-       filename = "./figures/Microbiome_multivariate_corallines_controls_Bray_NMDS_rarefied.png")
-
-
-
-Fig1b <- PCOA_coord_rare %>% 
-  ggplot(aes(y=Axis.2,x= Axis.1,shape=Substrate)) + #ylim(-.3,.3)+
-  geom_point(size=2)+
-  xlab("Axis I")+ ylab("Axis II")+
-  guides(shape=guide_legend(ncol=2),fill=guide_legend(ncol=2))+
-  theme_few()+ 
-  #annotate("text",x=-0.3, y=.8, label=paste0("Stress value  = ",round(MDS_bray$stress,2))) +
-  theme(#legend.spacing.y = unit(0, "mm"), 
-    panel.border = element_rect(colour = "black", fill=NA),
-    legend.background = element_blank(),
-    legend.box.background = element_rect(colour = "black"),
-    legend.position = c(0.83, 0.88),legend.title=element_text(size=14),
-    legend.text=element_text(size=12)
-  )
-
-Fig1b
-
-Fig1b_col<- Fig1b +  geom_convexhull(aes(fill=Substrate),alpha=0.15,size=.2)+
-  #scale_fill_manual(values= c("#67ae62","white","white", "#7f63b8", "#b87e39","#b94971"))
-  scale_fill_manual(values= c("red","white","white", "#b0923b", "#006400","blue"))
-Fig1b_col
-#Fig1b_bw<- Fig1b +  geom_convexhull(alpha=0.05,size=.2)
-#Fig1b_bw
-
-
-ggsave(Fig1b_col, width = 21, height = 16, units = "cm", dpi = 600,
-       filename = "./figures/Microbiome_multivariate_corallines_controls_Aitchison_PCoA_rarefied.png")
-
-
-
-
+      filename = "./figures/Microbiome_multivariate_corallines_controls_Bray_NMDS_rarefied.png")
 
 Fig1c <- PCOA_coord_nonR %>% 
   ggplot(aes(y=Axis.2,x= Axis.1,shape=Substrate)) + #ylim(-.3,.3)+
@@ -216,28 +167,14 @@ ggsave(Fig1c_col, width = 21, height = 16, units = "cm", dpi = 600,
 #### --- Statistical Analysis ---####
 #-------------------------------------
 
-
-
 ## Rarefied approach
 phyloseq_obj_rare_subset = phyloseq_obj_rare %>% subset_samples(Substrate %in% c("Corraline","Red_crust"))
 sample_info_rare_sub = as_tibble(sample_data(phyloseq_obj_rare_subset ))
-
-
 
 # Bray-Curtis method
 bray_div_sub = phyloseq_obj_rare_subset  %>% 
   distance("bray")
 hist(c(bray_div_sub))
-
-# Compositionally -aware method « Aitchison » distance 
-
-aitc_div_rare_sub = phyloseq_obj_rare_subset %>% 
-  microbiome::transform("clr") %>% 
-  phyloseq::distance("euclidean")
-hist(c(aitc_div_rare_sub))
-
-
-
 
 ## Non Rarefied 
 # Compositionally -aware method « Aitchison » distance 
@@ -251,7 +188,6 @@ aitc_div_nonR_sub = phyloseq_obj_nonR_subset %>%
 hist(c(aitc_div_nonR_sub))
 
 
-
 # NMDS for rarefied bray curtis data
 set.seed(946)
 MDS_bray2 <- bray_div_sub %>% 
@@ -260,48 +196,31 @@ MDS_bray2 <- bray_div_sub %>%
 NMDS_coord2 = MDS_bray2$points %>% as_tibble(rownames = "swab.ID") %>% 
   left_join(sample_info_rare_sub)
 
-
-
-
-# PCoA for rarefied compositionally -aware method
-set.seed(946)
-PCOA_aitc_rare2 <- aitc_div_rare_sub %>% 
-  pcoa() 
-
-PCOA_coord_rare2 = PCOA_aitc_rare2$vectors[,1:2]%>%
-  as_tibble(rownames = "swab.ID") %>% 
-  dplyr::left_join(sample_info_rare_sub)
-
-
-
 # PCoA for non rarefied compositionally -aware method
 set.seed(946)
 PCOA_aitc_nonR2 <- aitc_div_nonR_sub %>% 
   pcoa() 
 
-PCOA_coord_nonR2 = PCOA_aitc_nonR2$vectors[,1:2]%>%
+PCOA_coord_nonR2 = PCOA_aitc_nonR2$vectors[,1:3]%>%
   as_tibble(rownames = "swab.ID") %>% 
   dplyr::left_join(sample_info_nonR_sub)
 
 
-
-
-#PERMANOVA
+#PERMANOVA rarefied data 
 set.seed(253)
 model_beta = adonis2(bray_div_sub~Boulder+DNA.ID.updated, 
                      data = as_tibble(sample_data(phyloseq_obj_rare_subset)),
                      by = "margin", permutations = 9999)
 model_beta2 = adonis_OmegaSq(model_beta)
 model_beta2
-model_beta
+
 #Df SumOfSqs     F parOmegaSq Pr(>F)    
 #Boulder        22   4.4434 1.546    0.23095  0.001 ***
 #  DNA.ID.updated  8   3.4374 3.289    0.31403  0.001 ***
 #  Residual        9   1.1758                            
 #Total          39  12.0945  
 
-#PERMANOVA redcrust
-
+#PERMANOVA redcrust rarefied data
 dataRedcrust = as_tibble(sample_data(phyloseq_obj_rare_subset)) %>% 
   mutate(redcrust=Substrate=="Red_crust") %>% 
   group_by(redcrust) %>% sample_n(5)
@@ -312,12 +231,26 @@ model_beta = adonis2(dist_subset(bray_div_sub,dataRedcrust$swab.ID)~redcrust,
                      data = dataRedcrust,by = "margin", permutations = 9999)
 model_beta2 = adonis_OmegaSq(model_beta)
 model_beta2
-model_beta
 #Df SumOfSqs     F parOmegaSq Pr(>F)    
 #Boulder        22   4.4434 1.546    0.23095  0.001 ***
 #  DNA.ID.updated  8   3.4374 3.289    0.31403  0.001 ***
 #  Residual        9   1.1758                            
 #Total          39  12.0945  
+
+
+#PERMANOVA unrarefied data CoDa approach  
+set.seed(253)
+model_beta_CoDA = adonis2(aitc_div_nonR_sub~Boulder+DNA.ID.updated, 
+                     data = as_tibble(sample_data(phyloseq_obj_rare_subset)),
+                     by = "margin", permutations = 9999)
+model_beta_CoDA2 = adonis_OmegaSq(model_beta_CoDA)
+model_beta_CoDA2
+
+#Df SumOfSqs      F parOmegaSq Pr(>F)    
+#Boulder        22    42390 1.2792    0.13312 0.0193 *  
+#  DNA.ID.updated  8    26183 2.1728    0.19000 0.0001 ***
+#  Residual        9    13556                             
+#Total          39   102283     
 
 
 #### --- Family level diversity --- #####
@@ -422,18 +355,34 @@ ggsave(Fig2a_bw, width = 21, height = 16, units = "cm", dpi = 2400,
 
 
 
-#PCOA rarefied data
-str(PCOA_coord_rare2)
-PCOA_coord_rare2<- PCOA_coord_rare2 %>% dplyr::rename(Species=DNA.ID.updated)
+#PCOA CoDA unrarefied data
+str(PCOA_coord_nonR2)
+PCOA_coord_nonR2<- PCOA_coord_nonR2 %>% dplyr::rename(Species=DNA.ID.updated)
 
 #remove random #N/A in dataset. not sure how this entered dataset
 #PCOA_coord2<- PCOA_coord2 %>% filter(Species!="#N/A")
-ordered(unique(PCOA_coord_rare2$Species))
+ordered(unique(PCOA_coord_nonR2$Species))
 
 
 
-Fig2b_col <- PCOA_coord_rare2 %>% 
+Fig2b_col <- PCOA_coord_nonR2 %>% 
   ggplot(aes(y=Axis.2,x=Axis.1,shape=Species)) + 
+  #xlim(-.45,.85)+
+  #ylim(-0.2,.5)+
+  geom_point(alpha=1,size=2.5,stroke=1.1) + 
+  geom_convexhull(aes(fill=Species), alpha=0.15,size=.2)+
+  scale_shape_manual(values=c(1,7,3,4,15,6,17,8,19,12), labels=Species_labs)+
+  scale_fill_manual(values= c("#F8766D", "#D39200","white", "white" , "#00C19F", "#00B9E3", "#00BA38", "#DB72FB",
+                              "#FF61C3"),labels=Species_labs )+
+  theme_few() + 
+  guides(shape=guide_legend(ncol=2),fill=guide_legend(ncol=2))+
+  #annotate("text",x=-.35, y=.4, label=paste0("Stress value  = ",round(MDS_bray2$stress,2))) +
+  theme(legend.position = "none")
+
+Fig2b_col
+
+Fig2b2_col <- PCOA_coord_nonR2 %>% 
+  ggplot(aes(y=Axis.3,x=Axis.1,shape=Species)) + 
   #xlim(-.45,.85)+
   #ylim(-0.2,.5)+
   geom_point(alpha=1,size=2.5,stroke=1.1) + 
@@ -450,49 +399,13 @@ Fig2b_col <- PCOA_coord_rare2 %>%
     legend.position = c(0.72, 0.83),legend.title=element_text(size=13),
     legend.text=ggtext::element_markdown(size=11)
   )
-Fig2b_col
+Fig2b2_col
 
-ggsave(Fig2b_col, width = 21, height = 16, units = "cm", dpi = 2400,
-       filename = "./figures/Microbiome_multivariate_corallines_Aitchison_PCOA_Rarefied.png")
+Fig2bFINAL = ggarrange(Fig2b_col,Fig2b2_col,ncol = 1)
+Fig2bFINAL
 
-
-
-
-
-#Pcoa on non-rarified data
-
-
-str(PCOA_coord_nonR2)
-PCOA_coord_nonR2<- PCOA_coord_nonR2 %>% dplyr::rename(Species=DNA.ID.updated)
-
-
-ordered(unique(PCOA_coord_nonR2$Species))
-
-
-
-Fig2c_col <- PCOA_coord_nonR2 %>% 
-  ggplot(aes(y=Axis.2,x=Axis.1,shape=Species)) + 
-  #xlim(-.45,.85)+
-  #ylim(-0.2,.5)+
-  geom_point(alpha=1,size=2.5,stroke=1.1) + 
-  geom_convexhull(aes(fill=Species), alpha=0.15,size=.2)+
-  scale_shape_manual(values=c(1,7,3,4,15,6,17,8,19,12), labels=Species_labs)+
-  scale_fill_manual(values= c("#F8766D", "#D39200","white", "white" , "#00C19F", "#00B9E3", "#00BA38", "#DB72FB",
-                            "#FF61C3"),labels=Species_labs )+
-  theme_few() + 
-  guides(shape=guide_legend(ncol=2),fill=guide_legend(ncol=2))+
-  #annotate("text",x=-.35, y=.4, label=paste0("Stress value  = ",round(MDS_bray2$stress,2))) +
-  theme(#legend.spacing.y = unit(0, "mm"), 
-    legend.background = element_blank(),
-    legend.box.background = element_rect(colour = "black"),
-    legend.position = c(0.72, 0.83),legend.title=element_text(size=13),
-    legend.text=ggtext::element_markdown(size=11)
-  )
-Fig2c_col
-
-ggsave(Fig2c_col, width = 21, height = 16, units = "cm", dpi = 2400,
+ggsave(Fig2bFINAL, width = 21, height = 28, units = "cm", dpi = 2400,
        filename = "./figures/Microbiome_multivariate_corallines_Aitchison_PCOA_Non_Rarefied.png")
-
 
 
 
