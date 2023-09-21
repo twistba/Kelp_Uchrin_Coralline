@@ -104,6 +104,13 @@ model_betaAi2
 
 
 # FIGURE 
+
+#Coralline spelt wrong
+
+NMDS_coord<-NMDS_coord%>%
+  mutate(Substrate= str_replace(Substrate,"Corraline", "Coralline"))
+
+
 Fig1a <- NMDS_coord %>% 
   ggplot(aes(y=MDS2,x=MDS1,shape=Substrate)) + #ylim(-.3,.3)+
   geom_point(size=2)+
@@ -113,8 +120,8 @@ Fig1a <- NMDS_coord %>%
 theme(#legend.spacing.y = unit(0, "mm"), 
       panel.border = element_rect(colour = "black", fill=NA),
       legend.background = element_blank(),
-      legend.box.background = element_rect(colour = "black"),
-      legend.position = c(0.83, 0.88),legend.title=element_text(size=14),
+      #legend.box.background = element_rect(colour = "black"),
+      legend.position = c(0.83, 0.87),legend.title=element_text(size=14),
       legend.text=element_text(size=12)
       )
 
@@ -127,10 +134,17 @@ Fig1a_col
 #Fig1_bw<- Fig1 +  geom_convexhull(alpha=0.05,size=.2)
 #Fig1_bw
 
-ggsave(Fig1a_col, width = 21, height = 16, units = "cm", dpi = 600,
+Fig1a_col2<- Fig1a_col +theme(legend.box.background = element_rect(colour = "black"))
+Fig1a_col2
+
+
+ggsave(Fig1a_col2, width = 21, height = 16, units = "cm", dpi = 600,
       filename = "./figures/Microbiome_multivariate_corallines_controls_Bray_NMDS_rarefied.png")
 
-Fig1c <- PCOA_coord_nonR %>% 
+PCOA_coord_nonR<-PCOA_coord_nonR%>%
+  mutate(Substrate= str_replace(Substrate,"Corraline", "Coralline"))
+
+Fig1b <- PCOA_coord_nonR %>% 
   ggplot(aes(y=Axis.2,x= Axis.1,shape=Substrate)) + #ylim(-.3,.3)+
   geom_point(size=2)+
   xlab("Axis I")+ ylab("Axis II")+
@@ -141,22 +155,46 @@ Fig1c <- PCOA_coord_nonR %>%
     panel.border = element_rect(colour = "black", fill=NA),
     legend.background = element_blank(),
     legend.box.background = element_rect(colour = "black"),
-    legend.position = c(0.83, 0.88),legend.title=element_text(size=14),
+    legend.position = c(0.83, 0.83),legend.title=element_text(size=14),
     legend.text=element_text(size=12)
   )
 
-Fig1c
+Fig1b
 
-Fig1c_col<- Fig1c +  geom_convexhull(aes(fill=Substrate),alpha=0.15,size=.2)+
+Fig1b_col<- Fig1b +  geom_convexhull(aes(fill=Substrate),alpha=0.15,size=.2)+
   #scale_fill_manual(values= c("#67ae62","white","white", "#7f63b8", "#b87e39","#b94971"))
   scale_fill_manual(values= c("red","white","white", "#b0923b", "#006400","blue"))
-Fig1c_col
-#Fig1c_bw<- Fig1c +  geom_convexhull(alpha=0.05,size=.2)
-#Fig1c_bw
+Fig1b_col
+#Fig1b_bw<- Fig1b +  geom_convexhull(alpha=0.05,size=.2)
+#Fig1b_bw
 
 
-ggsave(Fig1c_col, width = 21, height = 16, units = "cm", dpi = 600,
+
+ggsave(Fig1b_col, width = 21, height = 16, units = "cm", dpi = 600,
        filename = "./figures/Microbiome_multivariate_corallines_controls_PCoA_Aitchison_Non_rarefied.png")
+
+
+#### -- Combined figure -- ####
+
+Fig1a_comb<-Fig1a_col +  theme(legend.position="top", legend.title = element_blank())+
+  guides(fill=guide_legend(nrow=1,byrow=TRUE))
+Fig1a_comb
+
+Fig1b_comb<-Fig1b_col +  theme(legend.position="none")
+Fig1b_comb
+
+
+
+Fig1c <- ggarrange(Fig1a_comb, Fig1b_comb, 
+                  labels = c("A)", "B)"),
+                  ncol = 1, nrow = 2,
+                  heights = c(1,0.8))
+Fig1c
+
+ggsave(Fig1c, width = 21, height = 24, units = "cm", dpi = 600,
+       filename = "./figures/Microbiome_multivariate_corallines_controls_nMDS_and_PCoA.png")
+
+
 
 
 
@@ -367,44 +405,48 @@ ordered(unique(PCOA_coord_nonR2$Species))
 
 Fig2b_col <- PCOA_coord_nonR2 %>% 
   ggplot(aes(y=Axis.2,x=Axis.1,shape=Species)) + 
-  #xlim(-.45,.85)+
-  #ylim(-0.2,.5)+
+   ylab("Axis II")+ xlab("Axis I")+
   geom_point(alpha=1,size=2.5,stroke=1.1) + 
   geom_convexhull(aes(fill=Species), alpha=0.15,size=.2)+
   scale_shape_manual(values=c(1,7,3,4,15,6,17,8,19,12), labels=Species_labs)+
   scale_fill_manual(values= c("#F8766D", "#D39200","white", "white" , "#00C19F", "#00B9E3", "#00BA38", "#DB72FB",
                               "#FF61C3"),labels=Species_labs )+
   theme_few() + 
-  guides(shape=guide_legend(ncol=2),fill=guide_legend(ncol=2))+
-  #annotate("text",x=-.35, y=.4, label=paste0("Stress value  = ",round(MDS_bray2$stress,2))) +
-  theme(legend.position = "none")
+  theme(legend.position="top",legend.title = element_blank(),
+        legend.text=ggtext::element_markdown(size=11))+
+  #guides(fill=guide_legend(nrow=4,byrow=TRUE))
+  guides(shape=guide_legend(nrow=3),fill=guide_legend(nrow=3))
+
+
+
+
 
 Fig2b_col
 
+
+
 Fig2b2_col <- PCOA_coord_nonR2 %>% 
   ggplot(aes(y=Axis.3,x=Axis.1,shape=Species)) + 
-  #xlim(-.45,.85)+
-  #ylim(-0.2,.5)+
+  ylab("Axis III")+ xlab("Axis I")+ 
   geom_point(alpha=1,size=2.5,stroke=1.1) + 
   geom_convexhull(aes(fill=Species), alpha=0.15,size=.2)+
   scale_shape_manual(values=c(1,7,3,4,15,6,17,8,19,12), labels=Species_labs)+
   scale_fill_manual(values= c("#F8766D", "#D39200","white", "white" , "#00C19F", "#00B9E3", "#00BA38", "#DB72FB",
                               "#FF61C3"),labels=Species_labs )+
   theme_few() + 
-  guides(shape=guide_legend(ncol=2),fill=guide_legend(ncol=2))+
-  #annotate("text",x=-.35, y=.4, label=paste0("Stress value  = ",round(MDS_bray2$stress,2))) +
-  theme(#legend.spacing.y = unit(0, "mm"), 
-    legend.background = element_blank(),
-    legend.box.background = element_rect(colour = "black"),
-    legend.position = c(0.72, 0.83),legend.title=element_text(size=13),
-    legend.text=ggtext::element_markdown(size=11)
-  )
+  theme(legend.position = "none")
+
 Fig2b2_col
 
 Fig2bFINAL = ggarrange(Fig2b_col,Fig2b2_col,ncol = 1)
 Fig2bFINAL
 
-ggsave(Fig2bFINAL, width = 21, height = 28, units = "cm", dpi = 2400,
+Fig2bFINAL <- ggarrange(Fig2b_col,Fig2b2_col, 
+                   ncol = 1, nrow = 2,
+                   heights = c(1,0.68))
+Fig2bFINAL
+
+ggsave(Fig2bFINAL, width = 21, height = 28, units = "cm", dpi = 900,
        filename = "./figures/Microbiome_multivariate_corallines_Aitchison_PCOA_Non_Rarefied.png")
 
 
