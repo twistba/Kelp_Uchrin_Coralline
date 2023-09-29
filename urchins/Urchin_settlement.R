@@ -38,7 +38,7 @@ library(ggsignif)
 #read the metadata file with row numbers for each coralline species
 urchin<-read_csv("./urchins/Urchin_metamorphosis.csv")
 
-urchin<- urchin %>% mutate_at(vars(Block_shelf,Block,Type,Species_genetic_only,Cor_type,
+urchin<- urchin %>% mutate_at(vars(Block,Type,Species_genetic_only,Cor_type,
                                    Morpho_species,Genus, Species_code, Time_period,Recorder, Treated_species),
                               factor)
 str(urchin)
@@ -353,6 +353,7 @@ urchin_plot
 (urchin_plot_untreat<- urchin_plot %>% filter(Type =="Untreated"))
 
 
+
 p1<-ggplot(data=urchin_plot_untreat, aes(x=Species_genetic_only, y= Meta_adj_per, 
                                   ymin=Meta_adj_per -se, ymax= Meta_adj_per +se))+
   geom_bar(stat="identity",colour="black",fill="grey60") +
@@ -493,4 +494,5 @@ urchin_per_all<-urchin %>% drop_na(Species_genetic_only)%>%
 urchin_per_all
 
 write.csv(urchin_per_all,"./urchins/results/urchin_species_means_percentage.csv")
+write.csv(urchin_plot_anti,"./urchins/results/urchin_antibiotics_species_means_percentage.csv")
 
